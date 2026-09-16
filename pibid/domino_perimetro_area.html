@@ -44,6 +44,7 @@ descricao: "Gerador de peças de dominó matemático para impressão. Relaciona 
 
         .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; }
 
+        /* ====== CONTROLES E MANUAL NA TELA ====== */
         .manual-box {
             background-color: var(--bg-card);
             border: 1px solid #333;
@@ -56,7 +57,7 @@ descricao: "Gerador de peças de dominó matemático para impressão. Relaciona 
         .manual-box ul { margin-left: 20px; margin-bottom: 15px; font-size: 1.1rem; }
         .manual-box li { margin-bottom: 5px; }
         .highlight { color: var(--electric-cyan); font-weight: bold; }
-
+        
         .example-area {
             background: rgba(0, 0, 0, 0.4);
             padding: 15px;
@@ -69,13 +70,14 @@ descricao: "Gerador de peças de dominó matemático para impressão. Relaciona 
             flex-wrap: wrap;
         }
 
+        /* Painel de Impressão */
         .print-controls {
-            background: #12121c; border: 1px solid var(--electric-cyan); border-radius: 8px;
+            background: #12121c; border: 1px solid var(--electric-cyan); border-radius: 8px; 
             padding: 20px; margin-bottom: 30px; display: flex; flex-direction: column; align-items: center; gap: 20px;
         }
         .print-actions { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%;}
         .print-panel { background: rgba(255,255,255,0.02); border: 1px solid #333; padding: 15px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; gap: 15px; flex: 1; min-width: 300px; text-align: center;}
-
+        
         .select-box { padding: 8px; font-size: 1.1rem; font-family: 'Rajdhani', sans-serif; font-weight: bold; border-radius: 4px;}
         .btn {
             background: transparent; border: 2px solid var(--electric-cyan); color: var(--electric-cyan);
@@ -85,6 +87,7 @@ descricao: "Gerador de peças de dominó matemático para impressão. Relaciona 
         .btn:hover { background: var(--electric-cyan); color: var(--bg-dark); box-shadow: 0 0 15px var(--electric-cyan); }
         .btn-pieces { background: var(--electric-cyan); color: var(--bg-dark); }
 
+        /* ====== PEÇAS DE DOMINÓ (TELA E JOGO) ====== */
         .domino-grid {
             display: flex;
             flex-wrap: wrap;
@@ -119,13 +122,14 @@ descricao: "Gerador de peças de dominó matemático para impressão. Relaciona 
 
         .domino-divider {
             width: 0;
-            height: 90%;
+            height: 100%;
             border-left: 2px dashed #444;
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
         }
 
+        /* ====== MINI-PEÇAS (MANUAL IMPRESSO E TELA) ====== */
         .mini-domino {
             width: 48mm;
             height: 20mm;
@@ -150,7 +154,7 @@ descricao: "Gerador de peças de dominó matemático para impressão. Relaciona 
         }
         .mini-divider {
             width: 0;
-            height: 85%;
+            height: 100%;
             border-left: 1.5px dashed #444;
             position: absolute;
             left: 50%;
@@ -160,54 +164,56 @@ descricao: "Gerador de peças de dominó matemático para impressão. Relaciona 
             display: flex; align-items: center; justify-content: center; gap: 3mm; margin-top: 3mm;
         }
 
+        /* Oculto na tela normal */
         #print-manual-container { display: none; }
 
+        /* =========================================================
+           CONFIGURAÇÕES DE IMPRESSÃO INDIVIDUAIS
+           ========================================================= */
         @media print {
-            @page { margin: 0; }
-
+            @page { margin: 8mm; } 
+            
             body { background: #fff !important; margin: 0 !important; padding: 0 !important; color: #000 !important; }
             header, .manual-box, .print-controls { display: none !important; }
             .container { max-width: none !important; margin: 0 !important; padding: 0 !important; border: none !important; }
-
+            
             #print-manual-container, #domino-container { display: none !important; }
 
+            /* === MODO 1: IMPRESSÃO DE MANUAIS === */
             body.print-mode-manuals #print-manual-container {
                 display: grid !important;
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr 1fr; 
                 gap: 5mm;
                 align-content: start;
             }
             .print-manual-item {
                 border: 1px dashed #666;
                 padding: 4mm;
-                border-radius: 3mm;
+                border-radius: 0;
                 page-break-inside: avoid;
                 font-family: Arial, sans-serif;
                 font-size: 10.5pt;
                 line-height: 1.3;
                 background: #fafafa;
             }
-            .print-manual-item h2 { font-size: 12.5pt; margin: 0 0 5px 0; border-bottom: 2px solid #ccc; padding-bottom: 3px; font-family: 'Orbitron', sans-serif;}
+            .print-manual-item h2 { font-size: 12pt; margin: 0 0 5px 0; border-bottom: 2px solid #ccc; padding-bottom: 3px; font-family: 'Orbitron', sans-serif;}
             .print-manual-item ul { margin: 0 0 6px 18px; padding: 0; }
             .print-manual-item p { margin: 0 0 6px 0; font-size: 9.5pt;}
 
+            /* === MODO 2: IMPRESSÃO DE PEÇAS === */
             body.print-mode-pieces #domino-container {
                 display: grid !important;
-                grid-template-columns: 1fr 1fr !important;
-                gap: 0 !important;
-                row-gap: 0 !important;
-                column-gap: 0 !important;
+                grid-template-columns: 88mm 88mm !important;
+                justify-content: center !important;
+                gap: 0 !important; 
                 padding: 0 !important;
-                margin: 0 !important;
-                justify-items: center !important;
-                align-content: start !important;
             }
             .domino-piece {
                 width: 88mm !important;
                 height: 38mm !important;
                 margin: 0 !important;
                 box-shadow: none !important;
-                border: 1.5px solid #000 !important;
+                border: 1px solid #000 !important;
                 border-radius: 0 !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
@@ -230,24 +236,28 @@ descricao: "Gerador de peças de dominó matemático para impressão. Relaciona 
     </header>
 
     <div class="container">
-
+        
+        <!-- MANUAL DE REGRAS NA TELA -->
         <div class="manual-box">
             <h2>📜 Regras do Jogo</h2>
             <ul>
                 <li><strong>Jogadores:</strong> 2 a 5 pessoas.</li>
-                <li><strong>Preparação:</strong> Distribua 5 peças para cada jogador. As peças restantes formam o <strong>Cemitério</strong>.</li>
-                <li><span class="highlight">A Regra de Ouro:</span> O jogo intercala <strong>TEXTOS</strong> e <strong>FIGURAS</strong>. Você NUNCA pode conectar um Texto a outro Texto, ou uma Figura a outra Figura!</li>
-                <li><strong>A Matemática:</strong> O Texto (ex: "P: 16") diz exatamente o que a Figura conectada nele deve ter (neste caso, 16 de Perímetro).</li>
+                <li><strong>A Peça:</strong> Os dois lados de uma mesma peça são totalmente independentes! Eles servem para se conectar com OUTRAS peças na mesa.</li>
+                <li><span class="highlight">A Regra de Ouro:</span> O jogo intercala <strong>TEXTOS</strong> e <strong>FIGURAS</strong>. Você NUNCA pode conectar um Texto a outro Texto, ou uma Figura a outra Figura.</li>
+                <li><strong>A Matemática:</strong> O Texto (ex: "P: 16") conecta SOMENTE na figura da outra peça que possuir 16 de Perímetro.</li>
                 <li><strong>Comprar:</strong> Se não tiver a peça, compre do cemitério até encontrar. Ganha quem zerar a mão primeiro.</li>
             </ul>
-            <p style="margin-top: 15px;"><strong>Exemplo de Jogada:</strong> A Peça A está na mesa exibindo o <strong>Retângulo 4x3</strong> livre. Você conecta o texto <strong>A: 12</strong> da Peça B nele (pois a Área da figura é 12). O jogo continua pelas pontas <em>P: 16</em> e <em>Ret. 5x3</em>.</p>
-            <div class="example-area" id="example-screen"></div>
+            <p style="margin-top: 15px;"><strong>Exemplo de Jogada:</strong> A Peça A está na mesa exibindo o <strong>Retângulo 4x3</strong> livre. Você conecta o texto <strong>A: 12</strong> da sua Peça B nela (pois a Área da figura da mesa é 12).</p>
+            <div class="example-area" id="example-screen">
+                <!-- Injetado via JS -->
+            </div>
         </div>
 
+        <!-- PAINEL DE IMPRESSÃO ISOLADO -->
         <div class="print-controls">
             <h3 style="color: var(--white); font-family: 'Orbitron';">Controles de Impressão Isolada</h3>
             <div class="print-actions">
-
+                
                 <div class="print-panel">
                     <label style="color: var(--text-light);">Quantidade de Manuais a Imprimir:</label>
                     <select id="manual-copies" class="select-box">
@@ -260,7 +270,7 @@ descricao: "Gerador de peças de dominó matemático para impressão. Relaciona 
                 </div>
 
                 <div class="print-panel">
-                    <label style="color: var(--text-light);">Kit de 28 Peças (Metade Texto, Metade Figura).</label>
+                    <label style="color: var(--text-light);">As peças serão impressas coladas para corte rápido.</label>
                     <div style="flex-grow: 1; display:flex; align-items:flex-end; width: 100%;">
                         <button class="btn btn-pieces" onclick="printPieces()">🖨️ 2. IMPRIMIR PEÇAS DO JOGO</button>
                     </div>
@@ -268,96 +278,102 @@ descricao: "Gerador de peças de dominó matemático para impressão. Relaciona 
 
             </div>
         </div>
-
+        
+        <!-- CONTAINER PARA IMPRESSÃO DO MANUAL -->
         <div id="print-manual-container"></div>
+
+        <!-- CONTAINER DAS PEÇAS -->
         <div class="domino-grid" id="domino-container"></div>
     </div>
 
     <script>
         const CHAVES = ['P: 12', 'A: 12', 'P: 16', 'A: 16', 'P: 20', 'A: 20', 'P: 24'];
 
+        // REPOSITÓRIO EXATAMENTE IGUAL AO PDF APROVADO:
+        // Contendo as frações originais exigidas e a dupla possibilidade de algumas figuras.
         const REPOSITORIO = {
-            0: [
-                { type: 'rect', w: 4, h: 2, lblW: '4', lblH: '2' },
-                { type: 'rect', w: 3, h: 3, lblW: '3', lblH: '3' },
-                { type: 'tri', style: 'right', b: 3, h: 4, hyp: 5, lblB: '3', lblH: '4', lblHyp: '5' },
-                { type: 'rect', w: 3.5, h: 2.5, lblW: '7/2', lblH: '5/2' }
+            0: [ // P=12
+                { type: 'rect', w: 4, h: 2, lblW: '4', lblH: '2' }, 
+                { type: 'tri', style: 'right', b: 3, h: 4, hyp: 5, lblB: '3', lblH: '4', lblHyp: '5' }, 
+                { type: 'rect', w: 3.5, h: 2.5, lblW: '7/2', lblH: '5/2' }, 
+                { type: 'rect', w: 3, h: 3, lblW: '3', lblH: '3' } 
             ],
-            1: [
-                { type: 'rect', w: 4, h: 3, lblW: '4', lblH: '3' },
-                { type: 'rect', w: 6, h: 2, lblW: '6', lblH: '2' },
-                { type: 'rect', w: 12, h: 1, lblW: '12', lblH: '1' },
-                { type: 'rect', w: 8, h: 1.5, lblW: '8', lblH: '3/2' }
+            1: [ // A=12
+                { type: 'rect', w: 4, h: 3, lblW: '4', lblH: '3' }, 
+                { type: 'rect', w: 6, h: 2, lblW: '6', lblH: '2' }, 
+                { type: 'rect', w: 10, h: 1.2, lblW: '10', lblH: '6/5' }, 
+                { type: 'rect', w: 8, h: 1.5, lblW: '8', lblH: '3/2' } 
             ],
-            2: [
-                { type: 'rect', w: 6, h: 2, lblW: '6', lblH: '2' },
-                { type: 'rect', w: 5, h: 3, lblW: '5', lblH: '3' },
-                { type: 'rect', w: 4, h: 4, lblW: '4', lblH: '4' },
-                { type: 'rect', w: 7, h: 1, lblW: '7', lblH: '1' }
+            2: [ // P=16
+                { type: 'rect', w: 5, h: 3, lblW: '5', lblH: '3' }, 
+                { type: 'tri', style: 'right', b: 4, h: 5.33, hyp: 6.66, lblB: '4', lblH: '16/3', lblHyp: '20/3' }, 
+                { type: 'rect', w: 4.5, h: 3.5, lblW: '9/2', lblH: '7/2' }, 
+                { type: 'tri', style: 'right', b: 6, h: 3.2, hyp: 6.8, lblB: '6', lblH: '16/5', lblHyp: '34/5' } 
             ],
-            3: [
-                { type: 'rect', w: 8, h: 2, lblW: '8', lblH: '2' },
-                { type: 'rect', w: 4, h: 4, lblW: '4', lblH: '4' },
-                { type: 'rect', w: 2, h: 8, lblW: '2', lblH: '8' },
-                { type: 'rect', w: 6, h: 2.666, lblW: '6', lblH: '8/3' }
+            3: [ // A=16
+                { type: 'rect', w: 5, h: 3.2, lblW: '5', lblH: '16/5' }, 
+                { type: 'rect', w: 6, h: 2.666, lblW: '6', lblH: '8/3' }, 
+                { type: 'rect', w: 12, h: 1.333, lblW: '12', lblH: '4/3' }, 
+                { type: 'rect', w: 8, h: 2, lblW: '8', lblH: '2' } 
             ],
-            4: [
-                { type: 'rect', w: 8, h: 2, lblW: '8', lblH: '2' },
-                { type: 'rect', w: 7, h: 3, lblW: '7', lblH: '3' },
-                { type: 'rect', w: 6, h: 4, lblW: '6', lblH: '4' },
-                { type: 'rect', w: 5, h: 5, lblW: '5', lblH: '5' }
+            4: [ // P=20
+                { type: 'rect', w: 6, h: 4, lblW: '6', lblH: '4' }, 
+                { type: 'tri', style: 'right', b: 5, h: 6.666, hyp: 8.333, lblB: '5', lblH: '20/3', lblHyp: '25/3' }, 
+                { type: 'rect', w: 7, h: 3, lblW: '7', lblH: '3' }, 
+                { type: 'tri', style: 'right', b: 4, h: 7.5, hyp: 8.5, lblB: '4', lblH: '15/2', lblHyp: '17/2' } 
             ],
-            5: [
-                { type: 'rect', w: 10, h: 2, lblW: '10', lblH: '2' },
-                { type: 'rect', w: 5, h: 4, lblW: '5', lblH: '4' },
-                { type: 'rect', w: 4, h: 5, lblW: '4', lblH: '5' },
-                { type: 'rect', w: 8, h: 2.5, lblW: '8', lblH: '5/2' }
+            5: [ // A=20
+                { type: 'rect', w: 5, h: 4, lblW: '5', lblH: '4' }, 
+                { type: 'rect', w: 8, h: 2.5, lblW: '8', lblH: '5/2' }, 
+                { type: 'rect', w: 6, h: 3.333, lblW: '6', lblH: '10/3' }, 
+                { type: 'rect', w: 7.5, h: 2.666, lblW: '15/2', lblH: '8/3' } 
             ],
-            6: [
-                { type: 'rect', w: 8, h: 4, lblW: '8', lblH: '4' },
-                { type: 'rect', w: 9, h: 3, lblW: '9', lblH: '3' },
-                { type: 'rect', w: 7, h: 5, lblW: '7', lblH: '5' },
-                { type: 'tri', style: 'right', b: 6, h: 8, hyp: 10, lblB: '6', lblH: '8', lblHyp: '10' }
+            6: [ // P=24
+                { type: 'rect', w: 8, h: 4, lblW: '8', lblH: '4' }, 
+                { type: 'tri', style: 'right', b: 6, h: 8, hyp: 10, lblB: '6', lblH: '8', lblHyp: '10' }, 
+                { type: 'rect', w: 7, h: 5, lblW: '7', lblH: '5' }, 
+                { type: 'tri', style: 'right', b: 4, h: 9.6, hyp: 10.4, lblB: '4', lblH: '48/5', lblHyp: '52/5' } 
             ]
         };
 
+        // ViewBox alargado (140x100) para garantir que frações não cortem na linha.
         function buildSVG(fig, isMini = false) {
             if (fig.type === 'text') {
                 let fs = isMini ? '16px' : '32px';
                 return `<div style="font-size: ${fs}; font-weight: 900; font-family: 'Orbitron', sans-serif;">${fig.val}</div>`;
             }
 
-            let svg = `<svg viewBox="0 0 100 100" width="100%" height="100%">`;
+            let svg = `<svg viewBox="0 0 140 100" width="100%" height="100%">`;
             let maxFigDim = Math.max(fig.w || fig.b, fig.h);
-            let escala = 60 / maxFigDim;
-
-            let fontSize = isMini ? "24" : "14";
-            let strokeW = isMini ? "4" : "2.5";
-            let yOffset = isMini ? "10" : "6";
+            let escala = 55 / maxFigDim; 
+            
+            let fontSize = isMini ? "22" : "14";
+            let strokeW = isMini ? "3.5" : "2.5";
+            let yOffset = isMini ? "8" : "6";
 
             if (fig.type === 'rect') {
                 let vw = fig.w * escala;
                 let vh = fig.h * escala;
-                let x = (100 - vw) / 2;
+                let x = (140 - vw) / 2;
                 let y = (100 - vh) / 2;
-
+                
                 svg += `<rect x="${x}" y="${y}" width="${vw}" height="${vh}" fill="#e8eaed" stroke="#000" stroke-width="${strokeW}"/>`;
-                svg += `<text x="50" y="${y - yOffset}" font-size="${fontSize}" text-anchor="middle" font-family="Arial" font-weight="bold" fill="#000">${fig.lblW}</text>`;
+                svg += `<text x="70" y="${y - yOffset}" font-size="${fontSize}" text-anchor="middle" font-family="Arial" font-weight="bold" fill="#000">${fig.lblW}</text>`;
                 svg += `<text x="${x - yOffset}" y="50" font-size="${fontSize}" text-anchor="end" dominant-baseline="central" font-family="Arial" font-weight="bold" fill="#000">${fig.lblH}</text>`;
-            }
+            } 
             else if (fig.style === 'right') {
                 let vw = fig.b * escala;
                 let vh = fig.h * escala;
-                let x = (100 - vw) / 2;
+                let x = (140 - vw) / 2;
                 let y = (100 - vh) / 2;
-
+                
                 svg += `<polygon points="${x},${y+vh} ${x+vw},${y+vh} ${x},${y}" fill="#e8eaed" stroke="#000" stroke-width="${strokeW}"/>`;
                 svg += `<rect x="${x}" y="${y+vh-8}" width="8" height="8" fill="none" stroke="#000" stroke-width="${strokeW/1.5}"/>`;
-
-                svg += `<text x="${x + vw/2}" y="${y + vh + (isMini?20:14)}" font-size="${fontSize}" text-anchor="middle" font-family="Arial" font-weight="bold" fill="#000">${fig.lblB}</text>`;
+                
+                svg += `<text x="${x + vw/2}" y="${y + vh + (isMini?18:14)}" font-size="${fontSize}" text-anchor="middle" font-family="Arial" font-weight="bold" fill="#000">${fig.lblB}</text>`;
                 svg += `<text x="${x - yOffset}" y="${y + vh/2}" font-size="${fontSize}" text-anchor="end" dominant-baseline="central" font-family="Arial" font-weight="bold" fill="#000">${fig.lblH}</text>`;
                 if (fig.hyp) {
-                    svg += `<text x="${x + vw/2 + (isMini?12:6)}" y="${y + vh/2 - (isMini?6:2)}" font-size="${fontSize}" text-anchor="start" font-family="Arial" font-weight="bold" fill="#000">${fig.lblHyp}</text>`;
+                    svg += `<text x="${x + vw/2 + (isMini?10:6)}" y="${y + vh/2 - (isMini?6:2)}" font-size="${fontSize}" text-anchor="start" font-family="Arial" font-weight="bold" fill="#000">${fig.lblHyp}</text>`;
                 }
             }
             svg += `</svg>`;
@@ -412,11 +428,12 @@ descricao: "Gerador de peças de dominó matemático para impressão. Relaciona 
                         <h2>📜 Dominó: Área e Perímetro</h2>
                         <ul>
                             <li><strong>Jogadores:</strong> 2 a 5 pessoas.</li>
-                            <li><strong>Preparação:</strong> Distribua 5 peças por jogador. O restante forma o <strong>Cemitério</strong>.</li>
-                            <li><strong>A Conexão:</strong> O jogo intercala <strong>TEXTOS</strong> e <strong>FIGURAS</strong>. O texto da peça descreve o que a figura conectada nela possui (ex: "P: 16" só conecta em figura de perímetro 16).</li>
-                            <li><strong>Comprar:</strong> Se não tiver peça para jogar, compre do cemitério até encontrar.</li>
+                            <li><strong>A Peça:</strong> Os dois lados de uma mesma peça são totalmente independentes! Eles servem para se conectar com OUTRAS peças.</li>
+                            <li><strong>A Conexão:</strong> O jogo intercala <strong>TEXTOS</strong> e <strong>FIGURAS</strong> unindo peças na mesa.</li>
+                            <li><strong>A Matemática:</strong> O Texto (ex: "P: 16") conecta SOMENTE na figura de outra peça que possuir 16 de Perímetro.</li>
+                            <li><strong>Comprar:</strong> Se não tiver peça para jogar, compre do cemitério.</li>
                         </ul>
-                        <p><strong>Exemplo de Jogada:</strong> A Peça A está na mesa exibindo um <strong>Retângulo 4x3</strong> livre. Você conecta o texto <strong>A: 12</strong> da Peça B nele (pois a Área da figura é 12). O jogo continua pelas pontas livres.</p>
+                        <p><strong>Exemplo:</strong> A Peça A tem o <strong>Retângulo 4x3</strong> livre. Você joga a Peça B nela encostando o lado <strong>A: 12</strong> (pois a Área daquela figura é 12).</p>
                         <div class="print-example">${examplePiecesHTMLPrint}</div>
                     </div>
                 `;
