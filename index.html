@@ -185,8 +185,12 @@
         {% if pagina.titulo and pagina.url != '/' and pagina.url != '/index.html' %}
           <a class="card" href="{{ pagina.url | relative_url }}">
             
-            <!-- Puxa o ícone configurado no arquivo, se não tiver, usa 📐 -->
-            <div class="card-icon">{{ pagina.icone | default: '📐' }}</div>
+            <!-- Verifica se o Mateus colocou uma imagem. Se sim, mostra a imagem. Se não, mostra o ícone. -->
+            {% if pagina.imagem %}
+              <img src="{{ pagina.imagem }}" alt="{{ pagina.titulo }}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 16px; margin-bottom: 18px; border: 1px solid rgba(255,255,255,0.1);">
+            {% else %}
+              <div class="card-icon">{{ pagina.icone | default: '📐' }}</div>
+            {% endif %}
             
             <!-- Puxa o título configurado -->
             <h2>{{ pagina.titulo }}</h2>
