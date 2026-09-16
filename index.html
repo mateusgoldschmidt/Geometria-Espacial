@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal de Geometria Espacial</title>
+  <title>Hub de Matemática</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,17 +24,9 @@
       --border:rgba(255,255,255,0.08);
     }
 
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-    }
+    *{ margin:0; padding:0; box-sizing:border-box; }
 
-    html{
-      width:100%;
-      overflow-x:hidden;
-      scroll-behavior:smooth;
-    }
+    html{ width:100%; overflow-x:hidden; scroll-behavior:smooth; }
 
     body{
       min-height:100vh;
@@ -42,8 +34,6 @@
       align-items:center;
       justify-content:center;
       padding:40px 24px;
-      overflow-x:hidden;
-      overflow-y:auto;
       font-family:'Outfit',sans-serif;
       color:var(--text);
       background:
@@ -61,16 +51,11 @@
       padding:55px 40px;
       text-align:center;
       backdrop-filter:blur(18px);
-      box-shadow:
-      0 30px 70px rgba(0,0,0,0.7),
-      0 0 35px rgba(99,102,241,0.1);
+      box-shadow: 0 30px 70px rgba(0,0,0,0.7), 0 0 35px rgba(99,102,241,0.1);
       margin:auto;
     }
 
-    .icone{
-      font-size:4rem;
-      margin-bottom:18px;
-    }
+    .icone{ font-size:4rem; margin-bottom:18px; }
 
     .tag{
       display:inline-block;
@@ -82,6 +67,7 @@
       font-size:0.82rem;
       font-weight:700;
       margin-bottom:22px;
+      text-transform: uppercase;
     }
 
     h1{
@@ -103,27 +89,11 @@
       line-height:1.6;
     }
 
-    .topic-section {
-      text-align: left;
-      margin-top: 50px;
-    }
-
-    .topic-title {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 1.8rem;
-      color: white;
-      margin-bottom: 25px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 15px;
-    }
-
     .cards{
       display:grid;
       grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
       gap:22px;
+      margin-top: 40px;
     }
 
     .card{
@@ -146,10 +116,7 @@
       box-shadow: 0 18px 30px rgba(0,0,0,0.45);
     }
 
-    .card-icon{
-      font-size:3rem;
-      margin-bottom:18px;
-    }
+    .card-icon{ font-size:3rem; margin-bottom:18px; }
 
     .card h2{
       font-size:1.3rem;
@@ -173,12 +140,8 @@
       font-size:0.95rem;
       width: 100%;
       text-align: center;
+      background:linear-gradient(135deg,var(--cyan),#2563eb);
     }
-
-    .lab .btn{ background:linear-gradient(135deg,var(--cyan),#2563eb); }
-    .quiz .btn{ background:linear-gradient(135deg,var(--green),#059669); }
-    .bingo .btn{ background:linear-gradient(135deg,var(--pink),#be185d); }
-    .disabled .btn { background: #333; color: #888; cursor: not-allowed; }
 
     .rodape{
       margin-top:50px;
@@ -195,7 +158,6 @@
       body{ padding:20px 16px; }
       .container{ border-radius:26px; padding:40px 20px; }
       h1{ font-size:2.8rem; }
-      .topic-title { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -204,106 +166,53 @@
 
   <div class="container">
 
-    <div class="icone">🧊</div>
+    <div class="icone">🌌</div>
 
     <div class="tag">
-      GEOMETRIA ESPACIAL • ENSINO MÉDIO
+      LABORATÓRIO DE MATEMÁTICA
     </div>
 
-    <h1>LABORATÓRIO 3D</h1>
+    <h1>PORTAL DIDÁTICO</h1>
 
     <p class="subtitulo">
-      Explore sólidos geométricos, analise planificações, compare volumes e 
-      teste seus conhecimentos em um ambiente totalmente interativo.
+      Explore todos os materiais interativos, applets 3D e ferramentas gamificadas
+      disponíveis neste diretório. O conteúdo abaixo é atualizado automaticamente.
     </p>
 
-    <div class="topic-section">
-      <h2 class="topic-title">🔺 Estudo dos Cones</h2>
-      <div class="cards">
-        <a class="card lab" href="Applet cones.html">
-          <div class="card-icon">🧪</div>
-          <h2>Applet Interativo</h2>
-          <p>Visualize cones, planificações, volumes e animações em 3D.</p>
-          <div class="btn">Explorar →</div>
-        </a>
-
-        <a class="card quiz" href="Quiz_cones.html">
-          <div class="card-icon">🏆</div>
-          <h2>Quiz Gamificado</h2>
-          <p>Resolva desafios interativos e dispute no ranking da turma.</p>
-          <div class="btn">Jogar →</div>
-        </a>
+    <div class="cards">
+      {% for pagina in site.pages %}
         
-        <a class="card bingo" href="Bingo_cones.html">
-          <div class="card-icon">🎱</div>
-          <h2>Bingo Geométrico</h2>
-          <p>Imprima cartelas exclusivas e faça o sorteio dinâmico.</p>
-          <div class="btn">Sortear →</div>
-        </a>
-      </div>
-    </div>
+        <!-- O Jekyll vai procurar qualquer arquivo que tenha 'titulo' no cabeçalho mágico -->
+        <!-- O 'and pagina.url != '/' ' impede que o próprio portal apareça na lista de cartões -->
+        {% if pagina.titulo and pagina.url != '/' and pagina.url != '/index.html' %}
+          <a class="card" href="{{ pagina.url | relative_url }}">
+            
+            <!-- Verifica se o Mateus colocou uma imagem. Se sim, mostra a imagem. Se não, mostra o ícone. -->
+            {% if pagina.imagem %}
+              <img src="{{ pagina.imagem }}" alt="{{ pagina.titulo }}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 16px; margin-bottom: 18px; border: 1px solid rgba(255,255,255,0.1);">
+            {% else %}
+              <div class="card-icon">{{ pagina.icone | default: '📐' }}</div>
+            {% endif %}
+            
+            <!-- Puxa o título configurado -->
+            <h2>{{ pagina.titulo }}</h2>
+            
+            <!-- Puxa a descrição configurada -->
+            <p>{{ pagina.descricao }}</p>
+            
+            <div class="btn">Acessar Material →</div>
+          </a>
+        {% endif %}
 
-    <div class="topic-section">
-      <h2 class="topic-title">🛢️ Estudo dos Cilindros</h2>
-      <div class="cards">
-        <a class="card lab" href="Applet cilindros.html">
-          <div class="card-icon">🧪</div>
-          <h2>Applet Interativo</h2>
-          <p>Princípio de Cavalieri, planificações e sólidos de revolução.</p>
-          <div class="btn">Explorar →</div>
-        </a>
-
-        <a class="card quiz disabled" href="#" onclick="event.preventDefault();">
-          <div class="card-icon">🏆</div>
-          <h2>Quiz Gamificado</h2>
-          <p>Resolva desafios interativos sobre áreas e volumes.</p>
-          <div class="btn">Em Breve</div>
-        </a>
-        
-        <a class="card bingo disabled" href="#" onclick="event.preventDefault();">
-          <div class="card-icon">🎱</div>
-          <h2>Bingo Geométrico</h2>
-          <p>Imprima cartelas exclusivas e faça o sorteio dinâmico.</p>
-          <div class="btn">Em Breve</div>
-        </a>
-      </div>
+      {% endfor %}
     </div>
 
     <div class="rodape">
-      <strong>Autoria:</strong><br>
-      Mateus Goldschmidt, Lavínia M. Ferreira, Karen Laís Vorpagel & Ivan Schwicckert<br>
-      UFFS — Licenciatura em Matemática | 2026
+      <strong>Atualização Automática (Jekyll)</strong><br>
+      Mateus Goldschmidt — UFFS | Licenciatura em Matemática
     </div>
 
   </div>
-
-  <!-- Botão fixo: Voltar ao Portfólio Pessoal -->
-  <style>
-    #btn-voltar-portfolio {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      z-index: 9999;
-      background: linear-gradient(135deg, #1a237e, #1565c0);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      font-size: 0.88rem;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-    #btn-voltar-portfolio:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.45); }
-  </style>
-  <a id="btn-voltar-portfolio" href="https://mateusgoldschmidt.github.io/">
-    &#8592; Portfólio Pessoal
-  </a>
 
 </body>
 </html>
