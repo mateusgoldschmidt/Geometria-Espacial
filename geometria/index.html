@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hub de Matemática</title>
+  <title>Portal de Geometria Espacial</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -166,24 +166,7 @@
 
   <div class="container">
 
-    <!-- Coloque o link da sua foto real no atributo src abaixo -->
-    <img src="sua_foto.jpg" alt="Mateus Goldschmidt" style="width: 150px; height: 150px; border-radius: 50%; border: 3px solid var(--primary); object-fit: cover; box-shadow: 0 0 25px rgba(99,102,241,0.3); margin-bottom: 20px;">
-    
-    <div class="tag">
-      MATEMÁTICA • UFFS
-    </div>
-
-    <h1>Mateus Goldschmidt</h1>
-
-    <p class="subtitulo">
-      Professor em formação e desenvolvedor de recursos educacionais digitais.
-      Abaixo você encontra meu portfólio de laboratórios interativos, applets 3D e ferramentas gamificadas.
-    </p>
-
-    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 40px 0;">
-
-    <div class="icone">🌌</div>
-    <h2 style="font-family:'Plus Jakarta Sans',sans-serif; font-size: 2rem; margin-bottom: 10px; color: white;">PORTAL DIDÁTICO</h2>
+    <h1>GEOMETRIA ESPACIAL</h1>
 
     <p class="subtitulo">
       Explore todos os materiais interativos, applets 3D e ferramentas gamificadas
@@ -193,22 +176,20 @@
     <div class="cards">
       {% for pagina in site.pages %}
         
-        <!-- O Jekyll vai procurar qualquer arquivo que tenha 'titulo' no cabeçalho mágico -->
-        <!-- O 'and pagina.url != '/' ' impede que o próprio portal apareça na lista de cartões -->
-        {% if pagina.titulo and pagina.url != '/' and pagina.url != '/index.html' %}
-          <a class="card" href="{{ pagina.url | relative_url }}">
+        <!-- O SEGREDO ESTÁ AQUI: "pagina.dir == '/geometria/'" -->
+        <!-- O Jekyll só vai puxar os materiais que estiverem salvos dentro desta mesma pasta -->
+        {% if pagina.dir == '/geometria/' and pagina.name != 'index.html' and pagina.titulo %}
+          
+          <!-- O link agora aponta diretamente para o nome do arquivo, já que estão na mesma pasta -->
+          <a class="card" href="{{ pagina.name }}">
             
-            <!-- Verifica se o Mateus colocou uma imagem. Se sim, mostra a imagem. Se não, mostra o ícone. -->
             {% if pagina.imagem %}
               <img src="{{ pagina.imagem }}" alt="{{ pagina.titulo }}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 16px; margin-bottom: 18px; border: 1px solid rgba(255,255,255,0.1);">
             {% else %}
               <div class="card-icon">{{ pagina.icone | default: '📐' }}</div>
             {% endif %}
             
-            <!-- Puxa o título configurado -->
             <h2>{{ pagina.titulo }}</h2>
-            
-            <!-- Puxa a descrição configurada -->
             <p>{{ pagina.descricao }}</p>
             
             <div class="btn">Acessar Material →</div>
@@ -219,10 +200,39 @@
     </div>
 
     <div class="rodape">
+      <strong>Atualização Automática de Diretório</strong><br>
       Mateus Goldschmidt — UFFS | Licenciatura em Matemática
     </div>
 
   </div>
+
+  <!-- Botão para voltar ao Portfólio Principal (Raiz) -->
+  <style>
+    #btn-voltar {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 9999;
+      background: linear-gradient(135deg, #1a237e, #1565c0);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 0.88rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    #btn-voltar:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.45); }
+  </style>
+  <a id="btn-voltar" href="../index.html">
+    &#8592; Voltar ao Portfólio
+  </a>
 
 </body>
 </html>
