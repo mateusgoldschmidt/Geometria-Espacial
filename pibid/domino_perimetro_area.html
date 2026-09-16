@@ -1,0 +1,499 @@
+---
+titulo: "Dominó Área e Perímetro"
+icone: "🁬"
+descricao: "Gerador de peças de dominó matemático para impressão. Relaciona cálculos de área e perímetro com figuras geométricas."
+---
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dominó Área e Perímetro - PIBID</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0b0c10;
+            --bg-card: #1f2833;
+            --electric-cyan: #00f0ff;
+            --text-light: #c5c6c7;
+            --white: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        header {
+            background: linear-gradient(135deg, #12121c 0%, #1f2833 100%);
+            border-bottom: 2px solid var(--electric-cyan);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 240, 255, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header img { height: 70px; margin-bottom: 15px; }
+        header h1 { font-family: 'Orbitron', sans-serif; font-size: 2rem; color: var(--white); text-shadow: 0 0 10px var(--electric-cyan); letter-spacing: 1px;}
+        header p { font-size: 1.1rem; color: var(--electric-cyan); text-transform: uppercase; margin-top: 5px;}
+        header .authors { font-size: 0.95rem; color: var(--text-light); margin-top: 10px; }
+
+        .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; }
+
+        .manual-box {
+            background-color: var(--bg-card);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .manual-box h2 { font-family: 'Orbitron', sans-serif; color: var(--white); margin-bottom: 10px; font-size: 1.4rem;}
+        .manual-box ul { margin-left: 20px; margin-bottom: 15px; font-size: 1.1rem; }
+        .manual-box li { margin-bottom: 5px; }
+        .highlight { color: var(--electric-cyan); font-weight: bold; }
+
+        .example-area {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px dashed var(--electric-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .print-controls {
+            background: #12121c; border: 1px solid var(--electric-cyan); border-radius: 8px;
+            padding: 20px; margin-bottom: 30px; display: flex; flex-direction: column; align-items: center; gap: 20px;
+        }
+        .print-actions { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%;}
+        .print-panel { background: rgba(255,255,255,0.02); border: 1px solid #333; padding: 15px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; gap: 15px; flex: 1; min-width: 300px; text-align: center;}
+
+        .select-box { padding: 8px; font-size: 1.1rem; font-family: 'Rajdhani', sans-serif; font-weight: bold; border-radius: 4px;}
+        .btn {
+            background: transparent; border: 2px solid var(--electric-cyan); color: var(--electric-cyan);
+            font-family: 'Orbitron', sans-serif; font-weight: bold; font-size: 1.1rem;
+            padding: 12px 20px; cursor: pointer; border-radius: 4px; transition: 0.2s; width: 100%;
+        }
+        .btn:hover { background: var(--electric-cyan); color: var(--bg-dark); box-shadow: 0 0 15px var(--electric-cyan); }
+        .btn-pieces { background: var(--electric-cyan); color: var(--bg-dark); }
+
+        .domino-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .domino-piece {
+            width: 88mm;
+            height: 38mm;
+            background-color: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            color: #000000;
+            position: relative;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .domino-half {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .domino-divider {
+            width: 0;
+            height: 90%;
+            border-left: 2px dashed #444;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .mini-domino {
+            width: 48mm;
+            height: 20mm;
+            background-color: #ffffff;
+            border: 1.5px solid #000000;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            color: #000000;
+            position: relative;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        .mini-half {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .mini-divider {
+            width: 0;
+            height: 85%;
+            border-left: 1.5px dashed #444;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .print-example {
+            display: flex; align-items: center; justify-content: center; gap: 3mm; margin-top: 3mm;
+        }
+
+        #print-manual-container { display: none; }
+
+        @media print {
+            @page { margin: 0; }
+
+            body { background: #fff !important; margin: 0 !important; padding: 0 !important; color: #000 !important; }
+            header, .manual-box, .print-controls { display: none !important; }
+            .container { max-width: none !important; margin: 0 !important; padding: 0 !important; border: none !important; }
+
+            #print-manual-container, #domino-container { display: none !important; }
+
+            body.print-mode-manuals #print-manual-container {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr;
+                gap: 5mm;
+                align-content: start;
+            }
+            .print-manual-item {
+                border: 1px dashed #666;
+                padding: 4mm;
+                border-radius: 3mm;
+                page-break-inside: avoid;
+                font-family: Arial, sans-serif;
+                font-size: 10.5pt;
+                line-height: 1.3;
+                background: #fafafa;
+            }
+            .print-manual-item h2 { font-size: 12.5pt; margin: 0 0 5px 0; border-bottom: 2px solid #ccc; padding-bottom: 3px; font-family: 'Orbitron', sans-serif;}
+            .print-manual-item ul { margin: 0 0 6px 18px; padding: 0; }
+            .print-manual-item p { margin: 0 0 6px 0; font-size: 9.5pt;}
+
+            body.print-mode-pieces #domino-container {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 0 !important;
+                row-gap: 0 !important;
+                column-gap: 0 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                justify-items: center !important;
+                align-content: start !important;
+            }
+            .domino-piece {
+                width: 88mm !important;
+                height: 38mm !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                border: 1.5px solid #000 !important;
+                border-radius: 0 !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .domino-piece:nth-child(14n) {
+                page-break-after: always !important;
+            }
+
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="https://res.cloudinary.com/dmvxu7ioq/image/upload/v1781662337/dakz1wjsar6xpener1ur.png" alt="Logo PIBID">
+        <h1>DOMINÓ: ÁREA E PERÍMETRO</h1>
+        <p>Laboratório de Matemática e Geometria</p>
+        <div class="authors">Desenvolvido por: Mateus Goldschmidt e Lavínia Mello Ferreira (PIBID)</div>
+    </header>
+
+    <div class="container">
+
+        <div class="manual-box">
+            <h2>📜 Regras do Jogo</h2>
+            <ul>
+                <li><strong>Jogadores:</strong> 2 a 5 pessoas.</li>
+                <li><strong>Preparação:</strong> Distribua 5 peças para cada jogador. As peças restantes formam o <strong>Cemitério</strong>.</li>
+                <li><span class="highlight">A Regra de Ouro:</span> O jogo intercala <strong>TEXTOS</strong> e <strong>FIGURAS</strong>. Você NUNCA pode conectar um Texto a outro Texto, ou uma Figura a outra Figura!</li>
+                <li><strong>A Matemática:</strong> O Texto (ex: "P: 16") diz exatamente o que a Figura conectada nele deve ter (neste caso, 16 de Perímetro).</li>
+                <li><strong>Comprar:</strong> Se não tiver a peça, compre do cemitério até encontrar. Ganha quem zerar a mão primeiro.</li>
+            </ul>
+            <p style="margin-top: 15px;"><strong>Exemplo de Jogada:</strong> A Peça A está na mesa exibindo o <strong>Retângulo 4x3</strong> livre. Você conecta o texto <strong>A: 12</strong> da Peça B nele (pois a Área da figura é 12). O jogo continua pelas pontas <em>P: 16</em> e <em>Ret. 5x3</em>.</p>
+            <div class="example-area" id="example-screen"></div>
+        </div>
+
+        <div class="print-controls">
+            <h3 style="color: var(--white); font-family: 'Orbitron';">Controles de Impressão Isolada</h3>
+            <div class="print-actions">
+
+                <div class="print-panel">
+                    <label style="color: var(--text-light);">Quantidade de Manuais a Imprimir:</label>
+                    <select id="manual-copies" class="select-box">
+                        <option value="2">2 cópias (1 Folha)</option>
+                        <option value="4">4 cópias (1 Folha)</option>
+                        <option value="6" selected>6 cópias (1 Folha)</option>
+                        <option value="8">8 cópias (2 Folhas)</option>
+                    </select>
+                    <button class="btn" onclick="printManuals()">🖨️ 1. IMPRIMIR MANUAIS</button>
+                </div>
+
+                <div class="print-panel">
+                    <label style="color: var(--text-light);">Kit de 28 Peças (Metade Texto, Metade Figura).</label>
+                    <div style="flex-grow: 1; display:flex; align-items:flex-end; width: 100%;">
+                        <button class="btn btn-pieces" onclick="printPieces()">🖨️ 2. IMPRIMIR PEÇAS DO JOGO</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="print-manual-container"></div>
+        <div class="domino-grid" id="domino-container"></div>
+    </div>
+
+    <script>
+        const CHAVES = ['P: 12', 'A: 12', 'P: 16', 'A: 16', 'P: 20', 'A: 20', 'P: 24'];
+
+        const REPOSITORIO = {
+            0: [
+                { type: 'rect', w: 4, h: 2, lblW: '4', lblH: '2' },
+                { type: 'rect', w: 3, h: 3, lblW: '3', lblH: '3' },
+                { type: 'tri', style: 'right', b: 3, h: 4, hyp: 5, lblB: '3', lblH: '4', lblHyp: '5' },
+                { type: 'rect', w: 3.5, h: 2.5, lblW: '7/2', lblH: '5/2' }
+            ],
+            1: [
+                { type: 'rect', w: 4, h: 3, lblW: '4', lblH: '3' },
+                { type: 'rect', w: 6, h: 2, lblW: '6', lblH: '2' },
+                { type: 'rect', w: 12, h: 1, lblW: '12', lblH: '1' },
+                { type: 'rect', w: 8, h: 1.5, lblW: '8', lblH: '3/2' }
+            ],
+            2: [
+                { type: 'rect', w: 6, h: 2, lblW: '6', lblH: '2' },
+                { type: 'rect', w: 5, h: 3, lblW: '5', lblH: '3' },
+                { type: 'rect', w: 4, h: 4, lblW: '4', lblH: '4' },
+                { type: 'rect', w: 7, h: 1, lblW: '7', lblH: '1' }
+            ],
+            3: [
+                { type: 'rect', w: 8, h: 2, lblW: '8', lblH: '2' },
+                { type: 'rect', w: 4, h: 4, lblW: '4', lblH: '4' },
+                { type: 'rect', w: 2, h: 8, lblW: '2', lblH: '8' },
+                { type: 'rect', w: 6, h: 2.666, lblW: '6', lblH: '8/3' }
+            ],
+            4: [
+                { type: 'rect', w: 8, h: 2, lblW: '8', lblH: '2' },
+                { type: 'rect', w: 7, h: 3, lblW: '7', lblH: '3' },
+                { type: 'rect', w: 6, h: 4, lblW: '6', lblH: '4' },
+                { type: 'rect', w: 5, h: 5, lblW: '5', lblH: '5' }
+            ],
+            5: [
+                { type: 'rect', w: 10, h: 2, lblW: '10', lblH: '2' },
+                { type: 'rect', w: 5, h: 4, lblW: '5', lblH: '4' },
+                { type: 'rect', w: 4, h: 5, lblW: '4', lblH: '5' },
+                { type: 'rect', w: 8, h: 2.5, lblW: '8', lblH: '5/2' }
+            ],
+            6: [
+                { type: 'rect', w: 8, h: 4, lblW: '8', lblH: '4' },
+                { type: 'rect', w: 9, h: 3, lblW: '9', lblH: '3' },
+                { type: 'rect', w: 7, h: 5, lblW: '7', lblH: '5' },
+                { type: 'tri', style: 'right', b: 6, h: 8, hyp: 10, lblB: '6', lblH: '8', lblHyp: '10' }
+            ]
+        };
+
+        function buildSVG(fig, isMini = false) {
+            if (fig.type === 'text') {
+                let fs = isMini ? '16px' : '32px';
+                return `<div style="font-size: ${fs}; font-weight: 900; font-family: 'Orbitron', sans-serif;">${fig.val}</div>`;
+            }
+
+            let svg = `<svg viewBox="0 0 100 100" width="100%" height="100%">`;
+            let maxFigDim = Math.max(fig.w || fig.b, fig.h);
+            let escala = 60 / maxFigDim;
+
+            let fontSize = isMini ? "24" : "14";
+            let strokeW = isMini ? "4" : "2.5";
+            let yOffset = isMini ? "10" : "6";
+
+            if (fig.type === 'rect') {
+                let vw = fig.w * escala;
+                let vh = fig.h * escala;
+                let x = (100 - vw) / 2;
+                let y = (100 - vh) / 2;
+
+                svg += `<rect x="${x}" y="${y}" width="${vw}" height="${vh}" fill="#e8eaed" stroke="#000" stroke-width="${strokeW}"/>`;
+                svg += `<text x="50" y="${y - yOffset}" font-size="${fontSize}" text-anchor="middle" font-family="Arial" font-weight="bold" fill="#000">${fig.lblW}</text>`;
+                svg += `<text x="${x - yOffset}" y="50" font-size="${fontSize}" text-anchor="end" dominant-baseline="central" font-family="Arial" font-weight="bold" fill="#000">${fig.lblH}</text>`;
+            }
+            else if (fig.style === 'right') {
+                let vw = fig.b * escala;
+                let vh = fig.h * escala;
+                let x = (100 - vw) / 2;
+                let y = (100 - vh) / 2;
+
+                svg += `<polygon points="${x},${y+vh} ${x+vw},${y+vh} ${x},${y}" fill="#e8eaed" stroke="#000" stroke-width="${strokeW}"/>`;
+                svg += `<rect x="${x}" y="${y+vh-8}" width="8" height="8" fill="none" stroke="#000" stroke-width="${strokeW/1.5}"/>`;
+
+                svg += `<text x="${x + vw/2}" y="${y + vh + (isMini?20:14)}" font-size="${fontSize}" text-anchor="middle" font-family="Arial" font-weight="bold" fill="#000">${fig.lblB}</text>`;
+                svg += `<text x="${x - yOffset}" y="${y + vh/2}" font-size="${fontSize}" text-anchor="end" dominant-baseline="central" font-family="Arial" font-weight="bold" fill="#000">${fig.lblH}</text>`;
+                if (fig.hyp) {
+                    svg += `<text x="${x + vw/2 + (isMini?12:6)}" y="${y + vh/2 - (isMini?6:2)}" font-size="${fontSize}" text-anchor="start" font-family="Arial" font-weight="bold" fill="#000">${fig.lblHyp}</text>`;
+                }
+            }
+            svg += `</svg>`;
+            return svg;
+        }
+
+        function makePieceHTML(sideA, sideB) {
+            return `
+                <div class="domino-piece">
+                    <div class="domino-half">${buildSVG(sideA, false)}</div>
+                    <div class="domino-divider"></div>
+                    <div class="domino-half">${buildSVG(sideB, false)}</div>
+                </div>
+            `;
+        }
+
+        function makeMiniPieceHTML(sideA, sideB) {
+            return `
+                <div class="mini-domino">
+                    <div class="mini-half">${buildSVG(sideA, true)}</div>
+                    <div class="mini-divider"></div>
+                    <div class="mini-half">${buildSVG(sideB, true)}</div>
+                </div>
+            `;
+        }
+
+        const pieceA_L = { type: 'text', val: 'P: 16' };
+        const pieceA_R = { type: 'rect', w: 4, h: 3, lblW: '4', lblH: '3' };
+        const pieceB_L = { type: 'text', val: 'A: 12' };
+        const pieceB_R = { type: 'rect', w: 5, h: 3, lblW: '5', lblH: '3' };
+
+        function printManuals() {
+            const count = parseInt(document.getElementById('manual-copies').value);
+            const manualContainer = document.getElementById('print-manual-container');
+            manualContainer.innerHTML = '';
+
+            const examplePiecesHTMLPrint = `
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <span style="font-size:9pt; font-weight:bold; margin-bottom:2px;">PEÇA A (Mesa)</span>
+                    ${makeMiniPieceHTML(pieceA_L, pieceA_R)}
+                </div>
+                <span style="font-size: 20pt; font-weight: bold;">🤝</span>
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <span style="font-size:9pt; font-weight:bold; margin-bottom:2px; color:var(--electric-cyan);">PEÇA B (Sua mão)</span>
+                    ${makeMiniPieceHTML(pieceB_L, pieceB_R)}
+                </div>
+            `;
+
+            for (let i = 0; i < count; i++) {
+                manualContainer.innerHTML += `
+                    <div class="print-manual-item">
+                        <h2>📜 Dominó: Área e Perímetro</h2>
+                        <ul>
+                            <li><strong>Jogadores:</strong> 2 a 5 pessoas.</li>
+                            <li><strong>Preparação:</strong> Distribua 5 peças por jogador. O restante forma o <strong>Cemitério</strong>.</li>
+                            <li><strong>A Conexão:</strong> O jogo intercala <strong>TEXTOS</strong> e <strong>FIGURAS</strong>. O texto da peça descreve o que a figura conectada nela possui (ex: "P: 16" só conecta em figura de perímetro 16).</li>
+                            <li><strong>Comprar:</strong> Se não tiver peça para jogar, compre do cemitério até encontrar.</li>
+                        </ul>
+                        <p><strong>Exemplo de Jogada:</strong> A Peça A está na mesa exibindo um <strong>Retângulo 4x3</strong> livre. Você conecta o texto <strong>A: 12</strong> da Peça B nele (pois a Área da figura é 12). O jogo continua pelas pontas livres.</p>
+                        <div class="print-example">${examplePiecesHTMLPrint}</div>
+                    </div>
+                `;
+            }
+
+            document.body.classList.add('print-mode-manuals');
+            window.print();
+            document.body.classList.remove('print-mode-manuals');
+        }
+
+        function printPieces() {
+            document.body.classList.add('print-mode-pieces');
+            window.print();
+            document.body.classList.remove('print-mode-pieces');
+        }
+
+        window.onload = () => {
+            const container = document.getElementById('domino-container');
+            const piecesData = [];
+
+            for (let i = 0; i < 7; i++) {
+                piecesData.push({ textIdx: i, figIdx: i });
+            }
+
+            for (let i = 0; i < 7; i++) {
+                for (let d = 1; d <= 3; d++) {
+                    let j = (i + d) % 7;
+                    piecesData.push({ textIdx: i, figIdx: j });
+                }
+            }
+
+            piecesData.forEach(piece => {
+                let sideA = { type: 'text', val: CHAVES[piece.textIdx] };
+                let sideB = REPOSITORIO[piece.figIdx].shift();
+                container.innerHTML += makePieceHTML(sideA, sideB);
+            });
+
+            document.getElementById('example-screen').innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <span style="font-size:12pt; font-weight:bold; margin-bottom:5px; color:var(--text-light);">PEÇA A (Mesa)</span>
+                    ${makePieceHTML(pieceA_L, pieceA_R)}
+                </div>
+                <span style="font-size: 30pt; font-weight: bold; margin: 0 10px;">🤝</span>
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <span style="font-size:12pt; font-weight:bold; margin-bottom:5px; color:var(--electric-cyan);">PEÇA B (Mão do Jogador)</span>
+                    ${makePieceHTML(pieceB_L, pieceB_R)}
+                </div>
+            `;
+        };
+    </script>
+
+    <style>
+      #btn-voltar {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        z-index: 9999;
+        background: linear-gradient(135deg, #1a237e, #1565c0);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 0.88rem;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+        transition: transform 0.15s, box-shadow 0.15s;
+      }
+      #btn-voltar:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.45); }
+      @media print { #btn-voltar { display: none !important; } }
+    </style>
+    <a id="btn-voltar" href="index.html">
+      &#8592; Voltar ao Portal
+    </a>
+</body>
+</html>
