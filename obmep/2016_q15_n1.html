@@ -1,0 +1,421 @@
+---
+titulo: "OBMEP 2016 - Questão 15 - Nível 1 (6º e 7º ano)"
+icone: "📐"
+descricao: "Geometria e Perímetros. Resolução Analítica passo a passo."
+---
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OBMEP 2016 - Nível 1 - Questão 15</title>
+<style>
+    body { margin:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#eef3fb; overflow:hidden; display: flex; }
+    
+    /* Painel Lateral */
+    #ui-container { position:absolute; top:16px; left:16px; width:420px; background:rgba(255,255,255,0.97); padding:20px; border-radius:16px; box-shadow:0 6px 20px rgba(0,0,0,0.15); z-index:100; max-height:94vh; display: flex; flex-direction: column; }
+    h1 { font-size:1.3rem; color:#1a73e8; margin:0 0 4px 0; display: flex; align-items: center; gap: 8px;}
+    h1 span.emoji { font-size:1.5rem; }
+    #subtitle { font-size:0.9rem; color:#5f6368; margin-bottom:15px; font-weight: 500;}
+    p, li { font-size:0.95rem; line-height:1.55; color:#2b2f33; }
+
+    /* Barra de progresso */
+    #progress-container { width: 100%; background: #e0e0e0; border-radius: 4px; height: 6px; margin-bottom: 15px; overflow: hidden; flex-shrink: 0;}
+    #progress-bar { height: 100%; background: #1a73e8; width: 0%; transition: width 0.3s ease; }
+    #step-counter { font-size: 0.85rem; font-weight: bold; color: #1a73e8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+
+    /* Painel de Informações e Texto */
+    #info-panel { background: #f8f9fa; padding: 15px; border-radius: 12px; border: 1px solid #dadce0; flex-grow: 1; overflow-y: auto; }
+    #step-title { font-weight:800; color:#0b57d0; font-size:1.1rem; margin-bottom:10px; }
+    #step-desc p { margin-top: 0; }
+
+    /* Equação Matemática Dinâmica */
+    .math-box { background: #fff; border: 2px solid #e8eaed; border-radius: 8px; padding: 12px; margin-top: 15px; text-align: center; font-size: 1.2rem; font-weight: bold; color: #3c4043; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+    .math-highlight { color: #d93025; font-size: 1.4rem; transition: color 0.3s; }
+    .math-blue { color: #1a73e8; }
+    .math-green { color: #188038; }
+
+    /* Controles de Navegação */
+    .nav-controls { display:flex; justify-content:space-between; margin-top:15px; gap:10px; flex-shrink: 0;}
+    .nav-btn { flex:1; padding:12px; font-size:0.95rem; border:none; border-radius:10px; background:#34a853; color:white; font-weight:700; cursor:pointer; transition: background 0.2s, transform 0.1s; }
+    .nav-btn:hover:not(:disabled) { background:#2d9047; }
+    .nav-btn:active:not(:disabled) { transform: scale(0.97); }
+    .nav-btn:disabled { background:#cfd8dc; color: #9aa0a6; cursor:not-allowed; }
+
+    /* Canvas Area */
+    #canvas-container { flex-grow: 1; height: 100vh; position: relative; display: flex; justify-content: center; align-items: center; }
+    canvas { display: block; width: 100%; height: 100%; }
+
+    .fun-box { background:#fff8e1; border-left:5px solid #fbbc04; padding:12px; border-radius:8px; margin-top:12px; font-size:0.9rem; font-weight: 500; }
+    
+    @media (max-width: 800px) {
+        #ui-container { position: relative; top: 0; left: 0; width: 100%; height: 50vh; border-radius: 0; box-shadow: none; }
+        #canvas-container { height: 50vh; }
+        body { flex-direction: column-reverse; }
+    }
+</style>
+</head>
+<body>
+
+<div id="ui-container">
+    <h1><span class="emoji">📐</span> Geometria e Perímetros</h1>
+    <div id="subtitle">OBMEP 2016 - Questão 15 (Resolução Analítica)</div>
+
+    <div id="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+
+    <div id="info-panel">
+        <div id="step-counter">Passo 1 de 6</div>
+        <div id="step-title"></div>
+        <div id="step-desc"></div>
+        
+        <div class="math-box" id="math-display">
+            <!-- A equação matemática vai aparecer aqui -->
+        </div>
+    </div>
+
+    <div class="nav-controls">
+        <button class="nav-btn" id="prevBtn" onclick="changeStep(-1)" style="background: #ea4335;">⬅ Anterior</button>
+        <button class="nav-btn" id="nextBtn" onclick="changeStep(1)">Próximo ➡</button>
+    </div>
+</div>
+
+<div id="canvas-container">
+    <canvas id="appCanvas"></canvas>
+</div>
+
+<script>
+    // --- Configuração do Canvas e Redimensionamento ---
+    const canvas = document.getElementById('appCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+
+    function resize() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        width = rect.width;
+        height = rect.height;
+        // High DPI display support
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.scale(dpr, dpr);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // --- Variáveis Geométricas (A Grade Corrigida) ---
+    // x0, x1, x2, x3 (colunas) e y0, y1, y2, y3 (linhas)
+    let x0, x1, x2, x3, y0, y1, y2, y3;
+
+    function updateGrid() {
+        // Proporções matemáticas exatas deduzidas dos perímetros
+        // Larguras: 5, 6, 3 | Alturas: 2, 4, 7 (Multiplicadas por 30)
+        const gridW = 420; // 150 + 180 + 90
+        const gridH = 390; // 60 + 120 + 210
+        const offsetX = (width - gridW) / 2 + (window.innerWidth > 800 ? 200 : 0);
+        const offsetY = (height - gridH) / 2;
+
+        x0 = offsetX;
+        x1 = offsetX + 150;
+        x2 = offsetX + 330;
+        x3 = offsetX + 420;
+
+        y0 = offsetY;
+        y1 = offsetY + 60;
+        y2 = offsetY + 180;
+        y3 = offsetY + 390;
+    }
+
+    // Cores dos retângulos
+    const C_TOP = '#4285f4'; // Azul
+    const C_BOT = '#34a853'; // Verde
+    const C_LEF = '#fbbc04'; // Amarelo
+    const C_RIG = '#ea4335'; // Vermelho
+    const C_GRAY = '#9c27b0'; // Roxo (Final)
+
+    // --- Definição dos Segmentos de Linha ---
+    let segments = [];
+
+    function initSegments() {
+        segments = [
+            // Retângulo Superior (16cm)
+            { id: 't_top', x1: x1, y1: y0, x2: x2, y2: y0, color: C_TOP, role: 'outer' },
+            { id: 't_bot', x1: x1, y1: y1, x2: x2, y2: y1, color: C_TOP, role: 'gray' },
+            { id: 't_lef', x1: x1, y1: y0, x2: x1, y2: y1, color: C_TOP, role: 'slide', group: 'top', tx1: x0, ty1: y0, tx2: x0, ty2: y1 },
+            { id: 't_rig', x1: x2, y1: y0, x2: x2, y2: y1, color: C_TOP, role: 'slide', group: 'top', tx1: x3, ty1: y0, tx2: x3, ty2: y1 },
+
+            // Retângulo Inferior (26cm)
+            { id: 'b_top', x1: x1, y1: y2, x2: x2, y2: y2, color: C_BOT, role: 'gray' },
+            { id: 'b_bot', x1: x1, y1: y3, x2: x2, y2: y3, color: C_BOT, role: 'outer' },
+            { id: 'b_lef', x1: x1, y1: y2, x2: x1, y2: y3, color: C_BOT, role: 'slide', group: 'bot', tx1: x0, ty1: y2, tx2: x0, ty2: y3 },
+            { id: 'b_rig', x1: x2, y1: y2, x2: x2, y2: y3, color: C_BOT, role: 'slide', group: 'bot', tx1: x3, ty1: y2, tx2: x3, ty2: y3 },
+
+            // Retângulo Esquerdo (18cm)
+            { id: 'l_top', x1: x0, y1: y1, x2: x1, y2: y1, color: C_LEF, role: 'slide', group: 'lef', tx1: x0, ty1: y0, tx2: x1, ty2: y0 },
+            { id: 'l_bot', x1: x0, y1: y2, x2: x1, y2: y2, color: C_LEF, role: 'slide', group: 'lef', tx1: x0, ty1: y3, tx2: x1, ty2: y3 },
+            { id: 'l_lef', x1: x0, y1: y1, x2: x0, y2: y2, color: C_LEF, role: 'outer' },
+            { id: 'l_rig', x1: x1, y1: y1, x2: x1, y2: y2, color: C_LEF, role: 'gray' },
+
+            // Retângulo Direito (14cm)
+            { id: 'r_top', x1: x2, y1: y1, x2: x3, y2: y1, color: C_RIG, role: 'slide', group: 'rig', tx1: x2, ty1: y0, tx2: x3, ty2: y0 },
+            { id: 'r_bot', x1: x2, y1: y2, x2: x3, y2: y2, color: C_RIG, role: 'slide', group: 'rig', tx1: x2, ty1: y3, tx2: x3, ty2: y3 },
+            { id: 'r_lef', x1: x2, y1: y1, x2: x2, y2: y2, color: C_RIG, role: 'gray' },
+            { id: 'r_rig', x1: x3, y1: y1, x2: x3, y2: y2, color: C_RIG, role: 'outer' }
+        ];
+    }
+
+    // --- Roteiro Didático Simplificado e Direto ---
+    const stepsData = [
+        {
+            title: "Enunciado da Questão",
+            desc: "<p><em>\"O retângulo ABCD foi dividido em nove retângulos menores, alguns deles com seus perímetros indicados na figura. O perímetro do retângulo ABCD é 54 cm. Qual é o perímetro do retângulo cinza?\"</em></p>",
+            math: "Perímetro Central = ?",
+            animState: { showValues: true, segmentsOpacity: 0, slides: {top:0, bot:0, lef:0, rig:0}, fadeOuter: 0 }
+        },
+        {
+            title: "Passo 1: Soma dos Perímetros Conhecidos",
+            desc: "<p>Ao somarmos os perímetros dos quatro retângulos menores cujas medidas são fornecidas, obtemos a medida total dos seus segmentos.</p>",
+            math: "<span style='color:"+C_TOP+"'>16</span> + <span style='color:"+C_BOT+"'>26</span> + <span style='color:"+C_LEF+"'>18</span> + <span style='color:"+C_RIG+"'>14</span> = <span class='math-highlight'>74 cm</span>",
+            animState: { showValues: true, segmentsOpacity: 1, slides: {top:0, bot:0, lef:0, rig:0}, fadeOuter: 0 }
+        },
+        {
+            title: "Passo 2: Análise dos Segmentos",
+            desc: "<p>Essa soma de 74 cm engloba exatamente dois conjuntos de segmentos geométricos:</p><ul><li>A totalidade do <strong>perímetro externo</strong> (retângulo ABCD).</li><li>Os <strong>segmentos internos</strong> que delimitam o retângulo central.</li></ul>",
+            math: "Soma total de segmentos = <span class='math-highlight'>74 cm</span>",
+            animState: { showValues: false, segmentsOpacity: 1, slides: {top:0, bot:0, lef:0, rig:0}, fadeOuter: 0 }
+        },
+        {
+            title: "Passo 3: Translação dos Segmentos",
+            desc: "<p>Podemos transladar (deslocar) os segmentos externos dos quatro retângulos em direção às arestas do retângulo principal (ABCD) para comprovar a sobreposição.</p><div class='fun-box'>Acompanhe a animação geométrica da translação.</div>",
+            math: "Transladando os segmentos...",
+            animState: { showValues: false, segmentsOpacity: 1, slides: {top:1, bot:1, lef:1, rig:1}, fadeOuter: 0 } 
+        },
+        {
+            title: "Passo 4: Subtração do Perímetro Externo",
+            desc: "<p>A composição das linhas transladadas forma perfeitamente o contorno do retângulo ABCD. Como o enunciado informa que este perímetro mede <strong>54 cm</strong>, basta subtraí-lo do total calculado.</p>",
+            math: "74 - <span class='math-blue'>54 (Borda ABCD)</span> = <span class='math-highlight'>20 cm</span>",
+            animState: { showValues: false, segmentsOpacity: 1, slides: {top:1, bot:1, lef:1, rig:1}, fadeOuter: 1 }
+        },
+        {
+            title: "Passo 5: Conclusão",
+            desc: "<p>A diferença exata corresponde aos segmentos que não foram transladados. Esses segmentos delimitam justamente o <strong>retângulo cinza</strong> central.</p><div class='fun-box'>Portanto, o perímetro do retângulo cinza é <strong>20 cm (Alternativa C)</strong>.</div>",
+            math: "<span class='math-green'>Perímetro = 20 cm</span>",
+            animState: { showValues: false, segmentsOpacity: 1, slides: {top:1, bot:1, lef:1, rig:1}, fadeOuter: 1, finalColor: true }
+        }
+    ];
+
+    let currentStep = 0;
+    
+    // Objeto para controle de interpolação
+    let animValues = {
+        segmentsOpacity: 0,
+        slides: { top: 0, bot: 0, lef: 0, rig: 0 },
+        fadeOuter: 0,
+        finalColorProgress: 0
+    };
+
+    function lerp(start, end, amt) {
+        return (1 - amt) * start + amt * end;
+    }
+
+    let slideTimers = [];
+
+    function setStep(n) {
+        currentStep = Math.max(0, Math.min(stepsData.length - 1, n));
+        const data = stepsData[currentStep];
+        
+        document.getElementById('step-title').innerHTML = data.title;
+        document.getElementById('step-desc').innerHTML = data.desc;
+        document.getElementById('math-display').innerHTML = data.math;
+        document.getElementById('step-counter').innerText = `Passo ${currentStep + 1} de ${stepsData.length}`;
+        
+        const progressPercent = (currentStep / (stepsData.length - 1)) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+        
+        document.getElementById('prevBtn').disabled = currentStep === 0;
+        document.getElementById('nextBtn').disabled = currentStep === stepsData.length - 1;
+
+        // Limpa sequências anteriores de deslizamento
+        slideTimers.forEach(t => clearTimeout(t));
+        slideTimers = [];
+
+        // Inicia a sequência de deslizamento um por um
+        if (currentStep === 3) {
+            data.animState.slides = { top: 0, bot: 0, lef: 0, rig: 0 }; // reseta ao iniciar
+            slideTimers.push(setTimeout(() => { if(currentStep===3) stepsData[3].animState.slides.top = 1; }, 200));
+            slideTimers.push(setTimeout(() => { if(currentStep===3) stepsData[3].animState.slides.bot = 1; }, 1000));
+            slideTimers.push(setTimeout(() => { if(currentStep===3) stepsData[3].animState.slides.lef = 1; }, 1800));
+            slideTimers.push(setTimeout(() => { if(currentStep===3) stepsData[3].animState.slides.rig = 1; }, 2600));
+        } else if (currentStep < 3) {
+            data.animState.slides = { top: 0, bot: 0, lef: 0, rig: 0 };
+        } else {
+            data.animState.slides = { top: 1, bot: 1, lef: 1, rig: 1 };
+        }
+    }
+
+    function changeStep(delta) {
+        setStep(currentStep + delta);
+    }
+
+    // --- Loop de Desenho e Animação ---
+    function draw() {
+        requestAnimationFrame(draw);
+        
+        updateGrid();
+        initSegments(); 
+        
+        const targetState = stepsData[currentStep].animState;
+        
+        // Interpolação suave dos valores e segmentos agrupados
+        animValues.segmentsOpacity = lerp(animValues.segmentsOpacity, targetState.segmentsOpacity, 0.1);
+        animValues.slides.top = lerp(animValues.slides.top, targetState.slides.top, 0.08);
+        animValues.slides.bot = lerp(animValues.slides.bot, targetState.slides.bot, 0.08);
+        animValues.slides.lef = lerp(animValues.slides.lef, targetState.slides.lef, 0.08);
+        animValues.slides.rig = lerp(animValues.slides.rig, targetState.slides.rig, 0.08);
+        animValues.fadeOuter = lerp(animValues.fadeOuter, targetState.fadeOuter, 0.08);
+        
+        let targetFinalColor = targetState.finalColor ? 1 : 0;
+        animValues.finalColorProgress = lerp(animValues.finalColorProgress, targetFinalColor, 0.1);
+
+        ctx.clearRect(0, 0, width, height);
+
+        // 1. Fundo cinza central
+        ctx.fillStyle = '#d1d5db';
+        ctx.fillRect(x1, y1, x2 - x1, y2 - y1);
+
+        // 2. Grade fraca de fundo
+        ctx.strokeStyle = '#bdc3c7';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x0, y0); ctx.lineTo(x0, y3);
+        ctx.moveTo(x1, y0); ctx.lineTo(x1, y3);
+        ctx.moveTo(x2, y0); ctx.lineTo(x2, y3);
+        ctx.moveTo(x3, y0); ctx.lineTo(x3, y3);
+        ctx.moveTo(x0, y0); ctx.lineTo(x3, y0);
+        ctx.moveTo(x0, y1); ctx.lineTo(x3, y1);
+        ctx.moveTo(x0, y2); ctx.lineTo(x3, y2);
+        ctx.moveTo(x0, y3); ctx.lineTo(x3, y3);
+        ctx.stroke();
+
+        ctx.fillStyle = '#5f6368';
+        ctx.font = "bold 16px 'Segoe UI'";
+        ctx.fillText("A", x0 - 15, y0 - 5);
+        ctx.fillText("B", x3 + 5, y0 - 5);
+        ctx.fillText("C", x3 + 5, y3 + 15);
+        ctx.fillText("D", x0 - 15, y3 + 15);
+
+        if (targetState.showValues) {
+            ctx.fillStyle = '#2b2f33';
+            ctx.font = "18px 'Segoe UI'";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("16 cm", (x1+x2)/2, (y0+y1)/2);
+            ctx.fillText("26 cm", (x1+x2)/2, (y2+y3)/2);
+            ctx.fillText("18 cm", (x0+x1)/2, (y1+y2)/2);
+            ctx.fillText("14 cm", (x2+x3)/2, (y1+y2)/2);
+        }
+
+        if (animValues.finalColorProgress > 0.5) {
+            ctx.fillStyle = C_GRAY;
+            ctx.font = "bold 22px 'Segoe UI'";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.globalAlpha = (animValues.finalColorProgress - 0.5) * 2;
+            ctx.fillText("20 cm", (x1+x2)/2, (y1+y2)/2);
+            ctx.globalAlpha = 1.0;
+        }
+
+        // 3. Desenha os Segmentos Animados
+        if (animValues.segmentsOpacity > 0.01) {
+            ctx.lineCap = "round";
+            
+            segments.forEach(seg => {
+                let currentX1 = seg.x1;
+                let currentY1 = seg.y1;
+                let currentX2 = seg.x2;
+                let currentY2 = seg.y2;
+                
+                // Aplica o deslizamento controlado pelo respectivo grupo
+                if (seg.role === 'slide') {
+                    let progress = animValues.slides[seg.group] || 0;
+                    currentX1 = lerp(seg.x1, seg.tx1, progress);
+                    currentY1 = lerp(seg.y1, seg.ty1, progress);
+                    currentX2 = lerp(seg.x2, seg.tx2, progress);
+                    currentY2 = lerp(seg.y2, seg.ty2, progress);
+                }
+
+                let opacity = animValues.segmentsOpacity;
+                
+                if (seg.role === 'outer' || seg.role === 'slide') {
+                    opacity *= (1 - animValues.fadeOuter);
+                    if (animValues.fadeOuter > 0) {
+                        currentY1 += animValues.fadeOuter * 50;
+                        currentY2 += animValues.fadeOuter * 50;
+                    }
+                }
+
+                if (opacity > 0.01) {
+                    ctx.globalAlpha = opacity;
+                    ctx.lineWidth = 6;
+                    
+                    let strokeColor = seg.color;
+                    if (seg.role === 'gray' && animValues.finalColorProgress > 0) {
+                        ctx.strokeStyle = C_GRAY;
+                        ctx.globalAlpha = opacity * animValues.finalColorProgress;
+                        ctx.beginPath();
+                        ctx.moveTo(currentX1, currentY1);
+                        ctx.lineTo(currentX2, currentY2);
+                        ctx.stroke();
+                        
+                        ctx.strokeStyle = seg.color;
+                        ctx.globalAlpha = opacity * (1 - animValues.finalColorProgress);
+                    } else {
+                        ctx.strokeStyle = strokeColor;
+                    }
+
+                    ctx.beginPath();
+                    ctx.moveTo(currentX1, currentY1);
+                    ctx.lineTo(currentX2, currentY2);
+                    ctx.stroke();
+                }
+            });
+            ctx.globalAlpha = 1.0;
+        }
+    }
+
+    // Inicialização
+    setStep(0);
+    draw();
+
+</script>
+
+<!-- Botão fixo de navegação -->
+<style>
+  #btn-voltar {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 9999;
+    background: linear-gradient(135deg, #1a237e, #1565c0);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 0.88rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  #btn-voltar:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.45); }
+</style>
+<a id="btn-voltar" href="https://mateusgoldschmidt.github.io/">
+  &#8592; Voltar ao Portfólio
+</a>
+</body>
+</html>
